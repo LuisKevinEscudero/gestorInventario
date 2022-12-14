@@ -18,7 +18,7 @@ namespace gestor.Models
         public string Location { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
-        public DateTime AddDate { get; set; }
+        public string AddDate { get; set; }
         public int Stock { get; set; }
 
         public double Price { get; set; }
@@ -27,8 +27,8 @@ namespace gestor.Models
         {
             
         }
-
-        public Item(int id, string name, string description, string category, string brand, string model, string serialNumber, string location, string status, string notes, DateTime addDate, int stock, double price)
+        
+        public Item(int id, string name, string description, string category, string brand, string model, string serialNumber, string location, string status, string notes, string addDate, int stock, double price)
         {
             this.Id = id;
             this.Name = name;
