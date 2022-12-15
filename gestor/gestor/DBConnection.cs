@@ -88,22 +88,43 @@ namespace gestor
             }
         }
 
-        public void UpdateData(SQLiteConnection conn, string tableName, List<ItemNames> itemNames, List<Item> items)
+        public void ReadById(SQLiteConnection conn, string tableName, List<ItemNames> itemNames, int id)
         {
             SQLiteCommand sqlite_cmd;
+            SQLiteDataReader sqlite_datareader;
             string columns = "";
-            string values = "";
             foreach (var item in itemNames)
             {
                 columns += item.Name + ", ";
             }
             columns = columns.Remove(columns.Length - 2);
-            foreach (var item in items)
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "SELECT " + columns + " FROM " + tableName + " WHERE Id = " + id + ";";
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            while (sqlite_datareader.Read())
             {
-                values += "('" + item.Id + "', '  " + item.Name + "', '" + item.Description + "', '" + item.Category + "', '" + item.Brand + "', '" + item.Model + "', '" + item.SerialNumber + "', '" + item.Location + "', '" + item.Status + "', '" + item.Notes + "', '" + item.AddDate + "', '" + item.Stock + "', '" + item.Price + "'), ";
+
+                for (int i = 0; i < sqlite_datareader.FieldCount; i++)
+                {
+                    Console.Write("{0} -> {1}\t", sqlite_datareader.GetName(i), sqlite_datareader.GetValue(i));
+                }
+                Console.WriteLine("\n--------------------");
             }
-            values = values.Remove(values.Length - 2);
-            string Createsql = "UPDATE " + tableName + " SET " + columns + " = " + values;
+        }
+
+        public void UpdateData(SQLiteConnection conn, string tableName, List<ItemNames> itemNames, List<Item> items, int idItem)
+        {
+            SQLiteCommand sqlite_cmd;
+            string columns = "";
+
+            for (int i = 1; i < itemNames.Count(); i++)
+            {
+                columns += itemNames[i].Name + " = '" + items[0].GetType().GetProperty(itemNames[i].Name).GetValue(items[0], null) + "', ";
+            }
+            columns = columns.Remove(columns.Length - 2);
+            string Createsql = "UPDATE " + tableName + " SET " + columns + " WHERE id = " + idItem;
+            
+            
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = Createsql;
             sqlite_cmd.ExecuteNonQuery();
@@ -121,6 +142,65 @@ namespace gestor
         public void TerminateConnection(SQLiteConnection conn)
         {
             conn.Close();
+        }
+
+        public void DeleteData(SQLiteConnection conn, string tableName, int idItem)
+        {
+            SQLiteCommand sqlite_cmd;
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "DELETE FROM " + tableName + " WHERE id = " + idItem;
+            sqlite_cmd.ExecuteNonQuery();
+        }
+
+        public void DeleteAllData(SQLiteConnection conn, string tableName)
+        {
+            SQLiteCommand sqlite_cmd;
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "DELETE FROM " + tableName;
+            sqlite_cmd.ExecuteNonQuery();
+        }
+
+        public List<string> GetTableNames(SQLiteConnection conn)
+        {
+            SQLiteCommand sqlite_cmd;
+            SQLiteDataReader sqlite_datareader;
+            
+            List<string> tables = new List<string>();
+            
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            int i = 0;
+            while (sqlite_datareader.Read())
+            {
+                tables.Add(sqlite_datareader.GetValue(i).ToString());
+                i++;
+            }
+            return tables;
+        }
+
+        public List<ItemNames> GetColumnsName(SQLiteConnection conn, string tableName)
+        {
+            SQLiteCommand sqlite_cmd;
+            SQLiteDataReader sqlite_datareader;
+
+            List<ItemNames> columns = new List<ItemNames>();
+
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "PRAGMA table_info(" + tableName + ");";
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+
+            while (sqlite_datareader.Read())
+            {
+                columns.Add(
+                    new ItemNames
+                    {
+                        Name = sqlite_datareader["name"].ToString(),
+                        Type = sqlite_datareader["type"].ToString()
+                    }
+                    );
+            }
+            return columns;
         }
     }
 }

@@ -39,6 +39,8 @@ namespace gestor
 
         private void selectionMenu(string optionMenu)
         {
+            var db = new DBConnection();
+            
             switch (optionMenu)
             {
                 case "1":
@@ -56,10 +58,11 @@ namespace gestor
                 case "4":
                     Console.Clear();
                     Console.WriteLine("Show Products");
+                    ShowProducts();
                     break;
                 case "5":
                     Console.Clear();
-                    Console.WriteLine("Show Product");
+                    Console.WriteLine("Show Product by ID");
                     break;
                 case "0":
                     Console.Clear();
@@ -74,6 +77,16 @@ namespace gestor
                     Console.WriteLine("Opcion no valida");
                     break;
             }
+        }
+
+        private void ShowProducts()
+        {
+            var db = new DBConnection();
+            var conn = db.CreateConnection();
+            var tableNames = db.GetTableNames(conn);
+            var columns = db.GetColumnsName(conn, tableNames[0]);
+            db.ReadData(conn, tableNames[0], columns);
+            db.TerminateConnection(conn);
         }
 
         private void returMenu()

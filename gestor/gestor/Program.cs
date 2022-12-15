@@ -18,15 +18,43 @@ namespace Gestor
 
 			List<ItemNames> itemNames = generateItemNames();
 			List<Item> items = generateItems();
-		
 
+			List<Item> updateItem = new List<Item>();
+			string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+			updateItem.Add(new Item { Id = 1, Name = "Updated Name", Description = "Updated Description", Category = "Updated Category", Brand = "Updated Brand", Model = "Updated Model", SerialNumber = "Updated SerialNumber", Location = "Updated Location", Status = "Updated Status", Notes = "Updated Notes", AddDate = date, Stock = 1, Price = 1 });
+
+			
+			
 			db.DropTable(sqlite_conn, "Items");
 			db.CreateTable(sqlite_conn, "Items", itemNames);
 			db.InsertData(sqlite_conn, "Items", items, itemNames);
+			/*Console.WriteLine("*****antes de update*****");
 			db.ReadData(sqlite_conn, "Items", itemNames);
-			//db.UpdateData(sqlite_conn, "Items", itemNames,);
+			db.UpdateData(sqlite_conn, "Items", itemNames, updateItem, updateItem[0].Id);
+			Console.WriteLine("*****despues de update*****");
+			db.ReadData(sqlite_conn, "Items", itemNames);
+			db.DeleteData(sqlite_conn, "Items", 1);
+			Console.WriteLine("*****despues de delete*****");
+			db.ReadData(sqlite_conn, "Items", itemNames);
+			Console.WriteLine("*****despues de deleteAll*****");
+			db.DeleteAllData(sqlite_conn, "Items");*/
+			db.ReadById(sqlite_conn, "Items", itemNames, 1);
+			List<string> tableNames = new List<string>();
+			tableNames = db.GetTableNames(sqlite_conn);
+
+			List<ItemNames> columnNames = new List<ItemNames>();
+			columnNames = db.GetColumnsName(sqlite_conn, "Items");
 			db.TerminateConnection(sqlite_conn);
 
+			foreach (var item in tableNames)
+			{
+				Console.WriteLine(item);
+			}
+			Console.WriteLine("*****columnNames*****");
+			foreach (var item in columnNames)
+			{
+				Console.WriteLine("Name: " + item.Name + " Type: " + item.Type);
+			}
 		}	
 		
 		
