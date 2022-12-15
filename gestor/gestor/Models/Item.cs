@@ -45,6 +45,22 @@ namespace gestor.Models
             this.Price = price;
         }
 
+        public Item(string name, string description, string category, string brand, string model, string serialNumber, string location, string status, string notes, string addDate, int stock, double price)
+        {
+            this.Name = name;
+            this.Description = description;
+            this.Category = category;
+            this.Brand = brand;
+            this.Model = model;
+            this.SerialNumber = serialNumber;
+            this.Location = location;
+            this.Status = status;
+            this.Notes = notes;
+            this.AddDate = addDate;
+            this.Stock = stock;
+            this.Price = price;
+        }
+
 
 
     }

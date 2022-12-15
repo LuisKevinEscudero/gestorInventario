@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gestor.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,14 +22,13 @@ namespace gestor
 
         private void TextMenu()
         {
-            Console.WriteLine("------Inventory Management------");
-            Console.WriteLine("\n");
+            Console.WriteLine("------INVENTORY MANAGEMENT------");
             Console.WriteLine("#################################");
             Console.WriteLine("1. Add Product");
             Console.WriteLine("2. Delete Product");
             Console.WriteLine("3. Update Product");
             Console.WriteLine("4. Show Products");
-            Console.WriteLine("5. Show Product");
+            Console.WriteLine("5. Show Product by ID");
             Console.WriteLine("0. Exit");
             Console.WriteLine("#################################");
             Console.WriteLine("\n");
@@ -46,10 +46,12 @@ namespace gestor
                 case "1":
                     Console.Clear();
                     Console.WriteLine("Add Product");
+                    AddProduct();
                     break;
                 case "2":
                     Console.Clear();
                     Console.WriteLine("Delete Product");
+                    DeleteProduct();
                     break;
                 case "3":
                     Console.Clear();
@@ -63,6 +65,7 @@ namespace gestor
                 case "5":
                     Console.Clear();
                     Console.WriteLine("Show Product by ID");
+                    ShowProductById();
                     break;
                 case "0":
                     Console.Clear();
@@ -79,6 +82,74 @@ namespace gestor
             }
         }
 
+        private void AddProduct()
+        {
+            var db = new DBConnection();
+            var conn = db.CreateConnection();
+            var tableName = db.GetTableNames(conn);
+            var itemNames = db.GetColumnsName(conn, tableName[0]);
+            var items = new List<Item>();
+            var item = new Item();
+            Console.WriteLine("Enter the request data and press enter for each field");
+
+            item.Id = db.GetMaxId(conn, tableName[0])+1;
+
+            Console.WriteLine("Enter the name of the product: ");
+            item.Name = Console.ReadLine();
+
+            Console.WriteLine("Enter the description of the product: ");
+            item.Description = Console.ReadLine();
+
+            Console.WriteLine("Enter the category of the product: ");
+            item.Category = Console.ReadLine();
+
+            Console.WriteLine("Enter the brand of the product: ");
+            item.Brand = Console.ReadLine();
+
+            Console.WriteLine("Enter the model of the product: ");
+            item.Model = Console.ReadLine();
+
+            Console.WriteLine("Enter the serial number of the product: ");
+            item.SerialNumber = Console.ReadLine();
+
+            Console.WriteLine("Enter the location of the product: ");
+            item.Location = Console.ReadLine();
+
+            Console.WriteLine("Enter the status of the product: ");
+            item.Status = Console.ReadLine();
+
+            Console.WriteLine("Enter the notes of the product: ");
+            item.Notes = Console.ReadLine();
+            
+            item.AddDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Console.WriteLine("Enter the stock of the product: ");
+            item.Stock = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("Enter the price of the product: ");
+            item.Price = Convert.ToDouble(Console.ReadLine());
+
+            items.Add(item);
+
+            db.InsertData(conn, tableName[0], items, itemNames);
+
+        }
+        
+        private void DeleteProduct()
+        {
+            Console.WriteLine("Enter the ID of the product to delete: ");
+            var id = Convert.ToInt32( Console.ReadLine());
+            var db = new DBConnection();
+            var conn = db.CreateConnection();
+            var tableNames = db.GetTableNames(conn);
+
+            db.DeleteData(conn, tableNames[0], id);
+            db.TerminateConnection(conn);
+            
+            Console.WriteLine("Product deleted");
+
+        }
+        
         private void ShowProducts()
         {
             var db = new DBConnection();
@@ -88,6 +159,19 @@ namespace gestor
             db.ReadData(conn, tableNames[0], columns);
             db.TerminateConnection(conn);
         }
+
+        private void ShowProductById()
+        {
+            Console.WriteLine("Enter the ID of the product: ");
+            var id =Convert.ToInt32(Console.ReadLine());
+            var db = new DBConnection();
+            var conn = db.CreateConnection();
+            var tableNames = db.GetTableNames(conn);
+            var columns = db.GetColumnsName(conn, tableNames[0]);
+            db.ReadById(conn, tableNames[0], columns, id);
+            db.TerminateConnection(conn);
+        }
+
 
         private void returMenu()
         {

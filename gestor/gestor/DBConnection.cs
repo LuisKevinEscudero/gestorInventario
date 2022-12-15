@@ -32,9 +32,18 @@ namespace gestor
         {
             SQLiteCommand sqlite_cmd;
             string columns = "";
+            string idFormat = "id INTEGER PRIMARY KEY AUTOINCREMENT, ";
             foreach (var item in itemNames)
             {
-                columns += item.Name + " " + item.Type + ", ";
+                if (item.Name == "Id")
+                {
+                    columns += idFormat;
+                }
+                else
+                {
+                    columns += item.Name + " " + item.Type + ", ";
+                }
+                //columns += item.Name + " " + item.Type + ", ";
             }
             columns = columns.Remove(columns.Length - 2);
             string Createsql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + columns + ")";
@@ -82,7 +91,7 @@ namespace gestor
 
                 for (int i = 0; i < sqlite_datareader.FieldCount; i++)
                 {
-                    Console.Write("{0} -> {1}\t",sqlite_datareader.GetName(i), sqlite_datareader.GetValue(i));
+                    Console.Write("{0} -> {1}\t", sqlite_datareader.GetName(i), sqlite_datareader.GetValue(i));
                 }
                 Console.WriteLine("\n--------------------");
             }
@@ -123,8 +132,8 @@ namespace gestor
             }
             columns = columns.Remove(columns.Length - 2);
             string Createsql = "UPDATE " + tableName + " SET " + columns + " WHERE id = " + idItem;
-            
-            
+
+
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = Createsql;
             sqlite_cmd.ExecuteNonQuery();
@@ -136,7 +145,6 @@ namespace gestor
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = "DROP TABLE " + tableName + ";";
             sqlite_cmd.ExecuteNonQuery();
-
         }
 
         public void TerminateConnection(SQLiteConnection conn)
@@ -160,13 +168,31 @@ namespace gestor
             sqlite_cmd.ExecuteNonQuery();
         }
 
+        /*public List<string> GetTableNames(SQLiteConnection conn)
+        {
+            SQLiteCommand sqlite_cmd;
+            SQLiteDataReader sqlite_datareader;
+
+            List<string> tables = new List<string>();
+
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            int i = 0;
+            while (sqlite_datareader.Read())
+            {
+                tables.Add(sqlite_datareader.GetValue(i).ToString());
+                i++;
+            }
+            return tables;
+        }*/
         public List<string> GetTableNames(SQLiteConnection conn)
         {
             SQLiteCommand sqlite_cmd;
             SQLiteDataReader sqlite_datareader;
-            
+
             List<string> tables = new List<string>();
-            
+
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
             sqlite_datareader = sqlite_cmd.ExecuteReader();
@@ -201,6 +227,22 @@ namespace gestor
                     );
             }
             return columns;
+        }
+
+        public int GetMaxId(SQLiteConnection conn, string tableName)
+        {
+            SQLiteCommand sqlite_cmd;
+            SQLiteDataReader sqlite_datareader;
+
+            sqlite_cmd = conn.CreateCommand();
+            sqlite_cmd.CommandText = "SELECT MAX(id) FROM " + tableName + ";";
+            sqlite_datareader = sqlite_cmd.ExecuteReader();
+            int maxId = 0;
+            while (sqlite_datareader.Read())
+            {
+                maxId = Convert.ToInt32(sqlite_datareader.GetValue(0));
+            }
+            return maxId;
         }
     }
 }

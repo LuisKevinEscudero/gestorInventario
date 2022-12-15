@@ -9,8 +9,8 @@ namespace Gestor
 	{
 		static void Main(string[] args)
 		{
-			//var menu = new Menu();
-			//menu.Start();
+			var menu = new Menu();
+			
 
 			SQLiteConnection sqlite_conn;
 			var db = new DBConnection();
@@ -18,43 +18,40 @@ namespace Gestor
 
 			List<ItemNames> itemNames = generateItemNames();
 			List<Item> items = generateItems();
-
-			List<Item> updateItem = new List<Item>();
-			string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-			updateItem.Add(new Item { Id = 1, Name = "Updated Name", Description = "Updated Description", Category = "Updated Category", Brand = "Updated Brand", Model = "Updated Model", SerialNumber = "Updated SerialNumber", Location = "Updated Location", Status = "Updated Status", Notes = "Updated Notes", AddDate = date, Stock = 1, Price = 1 });
-
-			
-			
+	
 			db.DropTable(sqlite_conn, "Items");
 			db.CreateTable(sqlite_conn, "Items", itemNames);
 			db.InsertData(sqlite_conn, "Items", items, itemNames);
-			/*Console.WriteLine("*****antes de update*****");
-			db.ReadData(sqlite_conn, "Items", itemNames);
-			db.UpdateData(sqlite_conn, "Items", itemNames, updateItem, updateItem[0].Id);
-			Console.WriteLine("*****despues de update*****");
-			db.ReadData(sqlite_conn, "Items", itemNames);
-			db.DeleteData(sqlite_conn, "Items", 1);
-			Console.WriteLine("*****despues de delete*****");
-			db.ReadData(sqlite_conn, "Items", itemNames);
-			Console.WriteLine("*****despues de deleteAll*****");
-			db.DeleteAllData(sqlite_conn, "Items");*/
-			db.ReadById(sqlite_conn, "Items", itemNames, 1);
-			List<string> tableNames = new List<string>();
-			tableNames = db.GetTableNames(sqlite_conn);
-
-			List<ItemNames> columnNames = new List<ItemNames>();
-			columnNames = db.GetColumnsName(sqlite_conn, "Items");
-			db.TerminateConnection(sqlite_conn);
-
-			foreach (var item in tableNames)
+			/*var names = db.GetTableNames(sqlite_conn);
+			foreach (var name in names)
 			{
-				Console.WriteLine(item);
-			}
-			Console.WriteLine("*****columnNames*****");
-			foreach (var item in columnNames)
-			{
-				Console.WriteLine("Name: " + item.Name + " Type: " + item.Type);
-			}
+				Console.WriteLine(name);
+			}	*/
+
+				
+				/*db.ReadData(sqlite_conn, "Items", itemNames);
+				Console.WriteLine("+++++++++++++++++++++++");
+
+				db.DeleteData(sqlite_conn, "Items", 10);
+				db.ReadData(sqlite_conn, "Items", itemNames);
+				Console.WriteLine("+++++++++++++++++++++++");
+
+				List<Item> items2 = new List<Item>();
+				string date2 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+				items2.Add(new Item(10,"hola", "que", "TAL", "Brand 1", "Model 1", "Serial Number 1", "Location 1", "Status 1", "Notes 1", date2, 1, 1.0));
+
+				db.InsertData(sqlite_conn, "Items", items2, itemNames);
+				db.ReadData(sqlite_conn, "Items", itemNames);
+				Console.WriteLine("+++++++++++++++++++++++");
+
+				var maxID = db.GetMaxId(sqlite_conn, "Items");
+				Console.WriteLine("Max ID: " + maxID);*/
+
+				db.TerminateConnection(sqlite_conn);
+			
+			
+			menu.Start();
+
 		}	
 		
 		
@@ -64,7 +61,7 @@ namespace Gestor
 			
 			string date2 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-			items.Add(new Item(1, "Item 1", "Description 1", "Category 1", "Brand 1", "Model 1", "Serial Number 1", "Location 1", "Status 1", "Notes 1", date2, 1, 1.0));
+			items.Add(new Item(1,"Item 1", "Description 1", "Category 1", "Brand 1", "Model 1", "Serial Number 1", "Location 1", "Status 1", "Notes 1", date2, 1, 1.0));
 			items.Add(new Item(2, "Item 2", "Description 2", "Category 2", "Brand 2", "Model 2", "Serial Number 2", "Location 2", "Status 2", "Notes 2", date2, 2, 2.0));
 			items.Add(new Item(3, "Item 3", "Description 3", "Category 3", "Brand 3", "Model 3", "Serial Number 3", "Location 3", "Status 3", "Notes 3", date2, 3, 3.0));
 			items.Add(new Item(4, "Item 4", "Description 4", "Category 4", "Brand 4", "Model 4", "Serial Number 4", "Location 4", "Status 4", "Notes 4", date2, 4, 4.0));
