@@ -86,13 +86,23 @@ namespace gestor
         {
             var db = new DBConnection();
             var conn = db.CreateConnection();
-            var tableName = db.GetTableNames(conn);
-            var itemNames = db.GetColumnsName(conn, tableName[0]);
+            var tableNames = db.GetTableNames(conn);
+
+            var tableName = "";
+            foreach (var i in tableNames)
+            {
+                if (i == "Items")
+                {
+                    tableName = i;
+                }
+            }
+
+            var itemNames = db.GetColumnsName(conn, tableName);
             var items = new List<Item>();
             var item = new Item();
             Console.WriteLine("Enter the request data and press enter for each field");
 
-            item.Id = db.GetMaxId(conn, tableName[0])+1;
+            item.Id = db.GetMaxId(conn, tableName)+1;
 
             Console.WriteLine("Enter the name of the product: ");
             item.Name = Console.ReadLine();
@@ -131,19 +141,30 @@ namespace gestor
 
             items.Add(item);
 
-            db.InsertData(conn, tableName[0], items, itemNames);
+            db.InsertData(conn, tableName, items, itemNames);
 
         }
         
         private void DeleteProduct()
         {
-            Console.WriteLine("Enter the ID of the product to delete: ");
-            var id = Convert.ToInt32( Console.ReadLine());
             var db = new DBConnection();
             var conn = db.CreateConnection();
             var tableNames = db.GetTableNames(conn);
 
-            db.DeleteData(conn, tableNames[0], id);
+            var tableName = "";
+            foreach (var i in tableNames)
+            {
+                if (i == "Items")
+                {
+                    tableName = i;
+                }
+            }
+
+            Console.WriteLine("Enter the ID of the product to delete: ");
+            var id = Convert.ToInt32( Console.ReadLine());
+            
+
+            db.DeleteData(conn, tableName, id);
             db.TerminateConnection(conn);
             
             Console.WriteLine("Product deleted");
@@ -155,8 +176,18 @@ namespace gestor
             var db = new DBConnection();
             var conn = db.CreateConnection();
             var tableNames = db.GetTableNames(conn);
-            var columns = db.GetColumnsName(conn, tableNames[0]);
-            db.ReadData(conn, tableNames[0], columns);
+
+            var tableName = "";
+            foreach (var i in tableNames)
+            {
+                if (i=="Items")
+                {
+                    tableName = i;
+                }
+            }
+
+            var columns = db.GetColumnsName(conn, tableName);
+            db.ReadData(conn, tableName, columns);
             db.TerminateConnection(conn);
         }
 
@@ -167,8 +198,18 @@ namespace gestor
             var db = new DBConnection();
             var conn = db.CreateConnection();
             var tableNames = db.GetTableNames(conn);
-            var columns = db.GetColumnsName(conn, tableNames[0]);
-            db.ReadById(conn, tableNames[0], columns, id);
+
+            var tableName = "";
+            foreach (var i in tableNames)
+            {
+                if (i == "Items")
+                {
+                    tableName = i;
+                }
+            }
+
+            var columns = db.GetColumnsName(conn, tableName);
+            db.ReadById(conn, tableName, columns, id);
             db.TerminateConnection(conn);
         }
 

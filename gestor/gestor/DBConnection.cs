@@ -168,24 +168,6 @@ namespace gestor
             sqlite_cmd.ExecuteNonQuery();
         }
 
-        /*public List<string> GetTableNames(SQLiteConnection conn)
-        {
-            SQLiteCommand sqlite_cmd;
-            SQLiteDataReader sqlite_datareader;
-
-            List<string> tables = new List<string>();
-
-            sqlite_cmd = conn.CreateCommand();
-            sqlite_cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
-            sqlite_datareader = sqlite_cmd.ExecuteReader();
-            int i = 0;
-            while (sqlite_datareader.Read())
-            {
-                tables.Add(sqlite_datareader.GetValue(i).ToString());
-                i++;
-            }
-            return tables;
-        }*/
         public List<string> GetTableNames(SQLiteConnection conn)
         {
             SQLiteCommand sqlite_cmd;
@@ -196,11 +178,10 @@ namespace gestor
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
             sqlite_datareader = sqlite_cmd.ExecuteReader();
-            int i = 0;
+
             while (sqlite_datareader.Read())
             {
-                tables.Add(sqlite_datareader.GetValue(i).ToString());
-                i++;
+                tables.Add(sqlite_datareader.GetValue(0).ToString());
             }
             return tables;
         }
