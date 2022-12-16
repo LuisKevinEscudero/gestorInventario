@@ -19,10 +19,10 @@ namespace Gestor
 			List<ItemNames> itemNames = generateItemNames();
 			List<Item> items = generateItems();
 	
-			//db.DropTable(sqlite_conn, "Items");
+			db.DropTable(sqlite_conn, "Items");
 			db.CreateTable(sqlite_conn, "Items", itemNames);
-			//db.InsertData(sqlite_conn, "Items", items, itemNames);
-			var names = db.GetTableNames(sqlite_conn);
+			db.InsertData(sqlite_conn, "Items", items, itemNames);
+			/*var names = db.GetTableNames(sqlite_conn);
 
 			foreach (var item in names)
 			{
@@ -33,7 +33,7 @@ namespace Gestor
 			}
 
 
-			/*db.ReadData(sqlite_conn, "Items", itemNames);
+			db.ReadData(sqlite_conn, "Items", itemNames);
 			Console.WriteLine("+++++++++++++++++++++++");
 
 			db.DeleteData(sqlite_conn, "Items", 10);
@@ -54,7 +54,7 @@ namespace Gestor
 			db.TerminateConnection(sqlite_conn);
 			
 			
-			//menu.Start();
+			menu.Start();
 
 		}	
 		

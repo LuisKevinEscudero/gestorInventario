@@ -43,7 +43,6 @@ namespace gestor
                 {
                     columns += item.Name + " " + item.Type + ", ";
                 }
-                //columns += item.Name + " " + item.Type + ", ";
             }
             columns = columns.Remove(columns.Length - 2);
             string Createsql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + columns + ")";
