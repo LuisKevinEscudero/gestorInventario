@@ -22,39 +22,17 @@ namespace Gestor
 			db.DropTable(sqlite_conn, "Items");
 			db.CreateTable(sqlite_conn, "Items", itemNames);
 			db.InsertData(sqlite_conn, "Items", items, itemNames);
-			/*var names = db.GetTableNames(sqlite_conn);
-
-			foreach (var item in names)
-			{
-				if (item == "Items")
-				{
-					Console.WriteLine(item);
-				}
-			}
-
-
 			db.ReadData(sqlite_conn, "Items", itemNames);
-			Console.WriteLine("+++++++++++++++++++++++");
-
-			db.DeleteData(sqlite_conn, "Items", 10);
+			Console.WriteLine("*****************************************");
+			List<Item> updateItems = new List<Item>();
+			updateItems.Add(new Item { Id = 1, Name = "Updateeee", Price = 1.1 });
+			db.UpdateData(sqlite_conn, "Items", itemNames, updateItems, 1);
 			db.ReadData(sqlite_conn, "Items", itemNames);
-			Console.WriteLine("+++++++++++++++++++++++");
-
-			List<Item> items2 = new List<Item>();
-			string date2 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-			items2.Add(new Item(10,"hola", "que", "TAL", "Brand 1", "Model 1", "Serial Number 1", "Location 1", "Status 1", "Notes 1", date2, 1, 1.0));
-
-			db.InsertData(sqlite_conn, "Items", items2, itemNames);
-			db.ReadData(sqlite_conn, "Items", itemNames);
-			Console.WriteLine("+++++++++++++++++++++++");
-
-			var maxID = db.GetMaxId(sqlite_conn, "Items");
-			Console.WriteLine("Max ID: " + maxID);*/
 
 			db.TerminateConnection(sqlite_conn);
 			
 			
-			menu.Start();
+			//menu.Start();
 
 		}	
 		
