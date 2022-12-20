@@ -8,7 +8,11 @@
     ".NETCoreApp,Version=v6.0": {
       "gestor/1.0.0": {
         "dependencies": {
-          "System.Data.SQLite": "1.0.117"
+          "System.Core": "3.5.21022.801",
+          "System.Data.SQLite": "1.0.117",
+          "System.Data.SQLite.Linq": "1.0.117",
+          "System.Runtime": "4.3.1",
+          "linq2db": "4.4.0"
         },
         "runtime": {
           "gestor.dll": {}
@@ -33,8 +37,17 @@
           }
         }
       },
+      "linq2db/4.4.0": {
+        "runtime": {
+          "lib/net6.0/linq2db.dll": {
+            "assemblyVersion": "4.4.0.0",
+            "fileVersion": "4.4.0.0"
+          }
+        }
+      },
       "Microsoft.CSharp/4.7.0": {},
       "Microsoft.NETCore.Platforms/3.1.0": {},
+      "Microsoft.NETCore.Targets/1.1.3": {},
       "Microsoft.Win32.Registry/4.7.0": {
         "dependencies": {
           "System.Security.AccessControl": "4.7.0",
@@ -145,6 +158,7 @@
           }
         }
       },
+      "System.Core/3.5.21022.801": {},
       "System.Data.SqlClient/4.8.1": {
         "dependencies": {
           "Microsoft.Win32.Registry": "4.7.0",
@@ -194,6 +208,14 @@
           }
         }
       },
+      "System.Data.SQLite.Linq/1.0.117": {
+        "runtime": {
+          "lib/net46/System.Data.SQLite.Linq.dll": {
+            "assemblyVersion": "1.0.117.0",
+            "fileVersion": "1.0.117.0"
+          }
+        }
+      },
       "System.Drawing.Common/4.7.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.0",
@@ -218,6 +240,12 @@
             "assemblyVersion": "4.0.2.0",
             "fileVersion": "4.700.19.56404"
           }
+        }
+      },
+      "System.Runtime/4.3.1": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0",
+          "Microsoft.NETCore.Targets": "1.1.3"
         }
       },
       "System.Security.AccessControl/4.7.0": {
@@ -289,6 +317,13 @@
       "path": "entityframework/6.4.4",
       "hashPath": "entityframework.6.4.4.nupkg.sha512"
     },
+    "linq2db/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6/u1EzQlV25bhN0Ej/I5dLV5Hgxun+ww/TX2VnMBnSVytED2VzQGeFIO/14I624GkfPOtB79x1ooL3F18dAbdw==",
+      "path": "linq2db/4.4.0",
+      "hashPath": "linq2db.4.4.0.nupkg.sha512"
+    },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
       "serviceable": true,
@@ -302,6 +337,13 @@
       "sha512": "sha512-z7aeg8oHln2CuNulfhiLYxCVMPEwBl3rzicjvIX+4sUuCwvXw5oXQEtbiU2c0z4qYL5L3Kmx0mMA/+t/SbY67w==",
       "path": "microsoft.netcore.platforms/3.1.0",
       "hashPath": "microsoft.netcore.platforms.3.1.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Targets/1.1.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3Wrmi0kJDzClwAC+iBdUBpEKmEle8FQNsCs77fkiOIw/9oYA07bL1EZNX0kQ2OMN3xpwvl0vAtOCYY3ndDNlhQ==",
+      "path": "microsoft.netcore.targets/1.1.3",
+      "hashPath": "microsoft.netcore.targets.1.1.3.nupkg.sha512"
     },
     "Microsoft.Win32.Registry/4.7.0": {
       "type": "package",
@@ -373,6 +415,13 @@
       "path": "system.configuration.configurationmanager/4.7.0",
       "hashPath": "system.configuration.configurationmanager.4.7.0.nupkg.sha512"
     },
+    "System.Core/3.5.21022.801": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QPzEPxDOY7zdWl4hpGcTCuMiTZa83YER1MO99l3pbj+Rn3Wp47kCTJBEUsoYu1ohiUdxsbjVENNP77Qr1MLvZQ==",
+      "path": "system.core/3.5.21022.801",
+      "hashPath": "system.core.3.5.21022.801.nupkg.sha512"
+    },
     "System.Data.SqlClient/4.8.1": {
       "type": "package",
       "serviceable": true,
@@ -401,12 +450,26 @@
       "path": "system.data.sqlite.ef6/1.0.117",
       "hashPath": "system.data.sqlite.ef6.1.0.117.nupkg.sha512"
     },
+    "System.Data.SQLite.Linq/1.0.117": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-n79RR22rVM+dkN6TF9QgbuLdJV+JKMmBaC5XE1HDcuXCy0n0Dq577DdaaWMwsAJc+8UNRrc2mNvxzTEoO0frNA==",
+      "path": "system.data.sqlite.linq/1.0.117",
+      "hashPath": "system.data.sqlite.linq.1.0.117.nupkg.sha512"
+    },
     "System.Drawing.Common/4.7.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-v+XbyYHaZjDfn0ENmJEV1VYLgGgCTx1gnfOBcppowbpOAriglYgGCvFCPr2EEZyBvXlpxbEsTwkOlInl107ahA==",
       "path": "system.drawing.common/4.7.0",
       "hashPath": "system.drawing.common.4.7.0.nupkg.sha512"
+    },
+    "System.Runtime/4.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-abhfv1dTK6NXOmu4bgHIONxHyEqFjW8HwXPmpY9gmll+ix9UNo4XDcmzJn6oLooftxNssVHdJC1pGT9jkSynQg==",
+      "path": "system.runtime/4.3.1",
+      "hashPath": "system.runtime.4.3.1.nupkg.sha512"
     },
     "System.Security.AccessControl/4.7.0": {
       "type": "package",

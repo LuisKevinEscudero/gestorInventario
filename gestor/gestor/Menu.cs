@@ -31,6 +31,7 @@ namespace gestor
             Console.WriteLine("#### 4. Show Products ###########");
             Console.WriteLine("#### 5. Show Product by ID ######");
             Console.WriteLine("#### 6. Show Product by Name ####");
+            Console.WriteLine("#### r. Reestart the menu #######");
             Console.WriteLine("#### 0. Exit ####################");
             Console.WriteLine("#################################");
             Console.WriteLine("\n");
@@ -154,6 +155,9 @@ namespace gestor
             {
                 item.Stock = Convert.ToInt32(input);
             }
+            else if (input == string.Empty)
+            {
+            }
             else
             {
                 throw new StockException("The stock must be a  positive number: " + input);
@@ -165,6 +169,9 @@ namespace gestor
             if (Double.TryParse(input, out price) && Convert.ToDouble(input) >= 0)
             {
                 item.Price = Convert.ToDouble(input);
+            }
+            else if (input == string.Empty)
+            {
             }
             else
             {
@@ -238,7 +245,8 @@ namespace gestor
             var itemNames = db.GetColumnsName(conn, tableName);
             var items = new List<Item>();
             var item = new Item();
-            Console.WriteLine("Enter the request data and press enter for each field");
+            Console.WriteLine("Enter the request data and press enter for each field, " +
+                "if you don't want to change a field, just press enter");
 
             Console.WriteLine("Enter the ID of the product to update: ");
             string input = Console.ReadLine();
@@ -249,7 +257,6 @@ namespace gestor
             {
                 id = Convert.ToInt32(input);
                 item.Id = id;
-                db.DeleteData(conn, tableName, id);
 
                 Console.WriteLine("Enter the name of the product(string): ");
                 item.Name = Console.ReadLine();
@@ -278,7 +285,7 @@ namespace gestor
                 Console.WriteLine("Enter the notes of the product(string): ");
                 item.Notes = Console.ReadLine();
 
-                item.AddDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                //item.AddDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             }
             Console.WriteLine("Enter the stock of the product(int): ");
@@ -287,6 +294,9 @@ namespace gestor
             if (Int32.TryParse(input, out stock) && Convert.ToInt32(input) >= 0)
             {
                 item.Stock = Convert.ToInt32(input);
+            }
+            else if (input == string.Empty)
+            {
             }
             else
             {
@@ -300,14 +310,20 @@ namespace gestor
             {
                 item.Price = Convert.ToDouble(input);
             }
+            else if (input == string.Empty)
+            {
+            }
             else
             {
                 throw new PriceException("The price must be a positive number: " + input);
             }
 
+  
             items.Add(item);
 
             db.UpdateData(conn,tableName,itemNames, items, id);
+
+            db.TerminateConnection(conn);
         }
 
         private void ShowProducts()

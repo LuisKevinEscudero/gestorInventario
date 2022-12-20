@@ -40,3 +40,5 @@ C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\obj\Debug\net
 C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\obj\Debug\net6.0\gestor.pdb
 C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\obj\Debug\net6.0\gestor.genruntimeconfig.cache
 C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\obj\Debug\net6.0\ref\gestor.dll
+C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\bin\Debug\net6.0\linq2db.dll
+C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\bin\Debug\net6.0\System.Data.SQLite.Linq.dll

@@ -18,16 +18,18 @@ namespace Gestor
 
 			List<ItemNames> itemNames = generateItemNames();
 			List<Item> items = generateItems();
-	
-			db.DropTable(sqlite_conn, "Items");
+			Console.WriteLine(sqlite_conn.ConnectionString);
+			db.crearTabla(sqlite_conn);
+
+			/*db.DropTable(sqlite_conn, "Items");
 			db.CreateTable(sqlite_conn, "Items", itemNames);
 			db.InsertData(sqlite_conn, "Items", items, itemNames);
 			db.ReadData(sqlite_conn, "Items", itemNames);
 			Console.WriteLine("*****************************************");
 			List<Item> updateItems = new List<Item>();
-			updateItems.Add(new Item { Id = 1, Name = "Updateeee", Price = 1.1 });
-			db.UpdateData(sqlite_conn, "Items", itemNames, updateItems, 1);
-			db.ReadData(sqlite_conn, "Items", itemNames);
+			updateItems.Add(new Item { Id = 8, Name = "Updateeee", Price = 1.1, Brand="a20lpt" });
+			db.UpdateData(sqlite_conn, "Items", itemNames, updateItems, 8);
+			db.ReadData(sqlite_conn, "Items", itemNames);*/
 
 			db.TerminateConnection(sqlite_conn);
 			
