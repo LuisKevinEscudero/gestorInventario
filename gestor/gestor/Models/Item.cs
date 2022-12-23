@@ -1,4 +1,5 @@
-﻿using LinqToDB.Mapping;
+﻿
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace gestor.Models
 {
-    [Table(Name ="Item")]
     public class Item
     {
-        [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerat‌ed(System.ComponentM‌​odel.DataAnnotations‌​.Schema.DatabaseGeneratedOp‌​tion.Identity)]
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -22,9 +22,9 @@ namespace gestor.Models
         public string Status { get; set; }
         public string Notes { get; set; }
         public string AddDate { get; set; }
-        public int Stock { get; set; }
+        public int? Stock { get; set; }
 
-        public double Price { get; set; }
+        public double? Price { get; set; }
 
         public Item()
         {

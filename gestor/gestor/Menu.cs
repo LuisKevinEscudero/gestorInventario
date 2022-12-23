@@ -1,10 +1,13 @@
 ﻿using gestor.Exceptions;
 using gestor.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static SQLite.TableMapping;
 
 namespace gestor
 {
@@ -69,22 +72,22 @@ namespace gestor
                 case "5":
                     Console.Clear();
                     Console.WriteLine("Show Product by ID");
-                    ShowProductById();
+                    //ShowProductById();
                     break;
                 case "6":
                     Console.Clear();
                     Console.WriteLine("Show Product by Name");
-                    ShowProductByName();
+                    //ShowProductByName();
                     break;
                 case "7":
                     Console.Clear();
                     Console.WriteLine("Add Table");
-                    AddTable();
+                    //AddTable();
                     break;
                 case "8":
                     Console.Clear();
                     Console.WriteLine("Show Tables");
-                    ShowTables();
+                    //ShowTables();
                     break;
                 case "0":
                     Console.Clear();
@@ -104,19 +107,9 @@ namespace gestor
         private void AddProduct()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
 
-            //string tableName = tableSelector(tableNames);
-            var tableName = "Items";
-
-
-            var itemNames = db.GetColumnsName(conn, tableName);
-            var items = new List<Item>();
             var item = new Item();
             Console.WriteLine("Enter the request data and press enter for each field");
-
-            item.Id = db.GetMaxId(conn, tableName) + 1;
 
             Console.WriteLine("Enter the name of the product(string): ");
             item.Name = Console.ReadLine();
@@ -146,8 +139,7 @@ namespace gestor
             item.Notes = Console.ReadLine();
 
             item.AddDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            
+        
             Console.WriteLine("Enter the stock of the product(int): ");
             var input = Console.ReadLine();
             int stock;
@@ -157,6 +149,7 @@ namespace gestor
             }
             else if (input == string.Empty)
             {
+                item.Stock = 0;
             }
             else
             {
@@ -172,17 +165,23 @@ namespace gestor
             }
             else if (input == string.Empty)
             {
+                item.Price = 0;
             }
             else
             {
                 throw new PriceException("The price must be a positive number: " + input);
             }
 
-            items.Add(item);
 
-            db.InsertData(conn, tableName, items, itemNames);
-
-            Console.WriteLine("\nProduct added successfully");
+            if (db.Insert(item))
+            {
+                Console.WriteLine("The product was added successfully");
+            }
+            else
+            {
+                throw new InsertException("Error inserting the product");
+            }
+            
             Console.WriteLine("\nThe data entered is: ");
             Console.WriteLine("Id: " + item.Id);
             Console.WriteLine("Name: " + item.Name);
@@ -198,52 +197,46 @@ namespace gestor
             Console.WriteLine("Stock: " + item.Stock);
             Console.WriteLine("Price: " + item.Price);
 
-            db.TerminateConnection(conn);
         }
 
         private void DeleteProduct()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
-            
-            //string tableName = tableSelector(tableNames);
-
-            string tableName = "Items";
 
             Console.WriteLine("Enter the ID of the product to delete: ");
             string input = Console.ReadLine();
             int id;
-            
-            var maxID = db.GetMaxId(conn, tableName);
 
+            int maxID = db.GetMaxId();
+
+            if (maxID == null)
+            {
+                Console.WriteLine("There are no products to delete");
+            }
+            
             if (Int32.TryParse(input, out id) && Convert.ToInt32(input) <= maxID && Convert.ToInt32(input) >= 0)
             {
                 id = Convert.ToInt32(input);
-                db.DeleteData(conn, tableName, id);
-                
-
-                Console.WriteLine("Product deleted");
+                if (db.Delete(id))
+                {
+                    Console.WriteLine("The product was deleted successfully");
+                }
+                else
+                {
+                    throw new DeleteException("Error deleting the product");
+                }
             }
             else
             {
                 throw new IdNotFoundException("The ID entered is not valid: " + input);
             }
             
-            db.TerminateConnection(conn);
         }
 
         private void UpdateProduct()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
 
-            //string tableName = tableSelector(tableNames);
-            string tableName = "Items";
-
-            var itemNames = db.GetColumnsName(conn, tableName);
-            var items = new List<Item>();
             var item = new Item();
             Console.WriteLine("Enter the request data and press enter for each field, " +
                 "if you don't want to change a field, just press enter");
@@ -251,7 +244,7 @@ namespace gestor
             Console.WriteLine("Enter the ID of the product to update: ");
             string input = Console.ReadLine();
             int id;
-            var maxID = db.GetMaxId(conn, tableName);
+            var maxID = db.GetMaxId();
 
             if (Int32.TryParse(input, out id) && Convert.ToInt32(input) <= maxID && Convert.ToInt32(input) >= 0)
             {
@@ -259,90 +252,178 @@ namespace gestor
                 item.Id = id;
 
                 Console.WriteLine("Enter the name of the product(string): ");
-                item.Name = Console.ReadLine();
+                item.Name = CheckInput(Console.ReadLine());
+                
 
                 Console.WriteLine("Enter the description of the product(string): ");
-                item.Description = Console.ReadLine();
+                item.Description = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the category of the product(string): ");
-                item.Category = Console.ReadLine();
+                item.Category = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the brand of the product(string): ");
-                item.Brand = Console.ReadLine();
+                item.Brand = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the model of the product(string): ");
-                item.Model = Console.ReadLine();
+                item.Model = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the serial number of the product(string): ");
-                item.SerialNumber = Console.ReadLine();
+                item.SerialNumber = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the location of the product(string): ");
-                item.Location = Console.ReadLine();
+                item.Location = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the status of the product(string): ");
-                item.Status = Console.ReadLine();
+                item.Status = CheckInput(Console.ReadLine());
 
                 Console.WriteLine("Enter the notes of the product(string): ");
-                item.Notes = Console.ReadLine();
+                item.Notes = CheckInput(Console.ReadLine());
 
-                //item.AddDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                item.AddDate = string.Empty;
 
-            }
-            Console.WriteLine("Enter the stock of the product(int): ");
-            input = Console.ReadLine();
-            int stock;
-            if (Int32.TryParse(input, out stock) && Convert.ToInt32(input) >= 0)
-            {
-                item.Stock = Convert.ToInt32(input);
-            }
-            else if (input == string.Empty)
-            {
+                Console.WriteLine("Enter the stock of the product(int): ");
+                input = Console.ReadLine();
+                int stock;
+                if (Int32.TryParse(input, out stock) && Convert.ToInt32(input) >= 0)
+                {
+                    item.Stock = Convert.ToInt32(input);
+                }
+                else if (input == string.Empty)
+                {
+
+                    item.Stock = null;
+                }
+                else
+                {
+                    throw new StockException("The stock must be a positive number: " + input);
+                }
+
+                Console.WriteLine("Enter the price of the product(double): ");
+                input = Console.ReadLine();
+                double price;
+                if (Double.TryParse(input, out price) && Convert.ToDouble(input) >= 0)
+                {
+                    item.Price = Convert.ToDouble(input);
+                }
+                else if (input == string.Empty)
+                {
+                    item.Price = null;
+                }
+                else
+                {
+                    throw new PriceException("The price must be a positive number: " + input);
+                }
             }
             else
             {
-                throw new StockException("The stock must be a positive number: " + input);
+                throw new IdNotFoundException("The ID entered is not valid: " + input);
             }
 
-            Console.WriteLine("Enter the price of the product(double): ");
-            input = Console.ReadLine();
-            double price;
-            if (Double.TryParse(input, out price) && Convert.ToDouble(input) >= 0)
+            if (!CheckItem(item))
             {
-                item.Price = Convert.ToDouble(input);
-            }
-            else if (input == string.Empty)
-            {
+                Console.WriteLine("hola");
+                if (db.Update(item))
+                {
+                    Console.WriteLine("The product was updated successfully");
+                }
+                else
+                {
+                    throw new UpdateException("Error updating the product");
+                }
             }
             else
             {
-                throw new PriceException("The price must be a positive number: " + input);
+                Console.WriteLine("You need to enter at least one field to update");
             }
+        }
+        
+        private string CheckInput(string input)
+        {
+            if (input == string.Empty)
+            {
+                return "";
+            }
+            else
+            {
+                return input;
+            }
+        }
 
-  
-            items.Add(item);
+        private bool CheckItem(Item item)
+        {
+            bool empty = false;
 
-            db.UpdateData(conn,tableName,itemNames, items, id);
-
-            db.TerminateConnection(conn);
+            if (item.Name == string.Empty)
+            {
+                Console.WriteLine("name: "+item.Name);
+                empty= true;
+            }
+            if (item.Description == string.Empty)
+            {
+                Console.WriteLine("descripcion: "+item.Description);
+                empty = true;
+            }
+            if (item.Category == string.Empty)
+            {
+                Console.WriteLine("category: "+item.Category);
+                empty = true;
+            }
+            if (item.Brand == string.Empty)
+            {
+                Console.WriteLine("brand: "+item.Brand);
+                empty = true;
+            }
+            if (item.Model == string.Empty)
+            {
+                Console.WriteLine("model: "+item.Model);
+                empty = true;
+            }
+            if (item.SerialNumber == string.Empty)
+            {
+                Console.WriteLine("serial number: "+item.SerialNumber);
+                empty = true;
+            }
+            if (item.Location == string.Empty)
+            {
+                Console.WriteLine("location: "+item.Location);
+                empty = true;
+            }
+            if (item.Status == string.Empty)
+            {
+                Console.WriteLine("status: "+item.Status);
+                empty = true;
+            }
+            if (item.Notes == string.Empty)
+            {
+                Console.WriteLine("notes: "+item.Notes);
+                empty = true;
+            }
+            if (item.AddDate == string.Empty)
+            {
+                Console.WriteLine("addDate: "+item.AddDate);
+                empty = true;
+            }
+            if (item.Stock == null)
+            {
+                Console.WriteLine("stock: "+item.Stock);
+                empty = true;
+            }
+            if (item.Price == null)
+            {
+                Console.WriteLine("price: "+item.Price);
+                empty = true;
+            }
+            return empty;
         }
 
         private void ShowProducts()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
-
-            //string tableName = tableSelector(tableNames);
-
-            string tableName = "Items";
-
-            var columns = db.GetColumnsName(conn, tableName);
-            db.ReadData(conn, tableName, columns);
-            
-            db.TerminateConnection(conn);
+            var listItems = db.ReadAll();
+            db.ShowItems(listItems);
         }
 
-        private void ShowProductById()
+        /*private void ShowProductById()
         {
 
             var db = new DBConnection();
@@ -461,7 +542,7 @@ namespace gestor
             {
                 Console.WriteLine("- " + i);
             }
-        }
+        }*/
 
 
         private void returMenu()

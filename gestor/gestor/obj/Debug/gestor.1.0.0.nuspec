@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>gestor</id>
+    <version>1.0.0</version>
+    <authors>gestor</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net6.0">
+        <dependency id="System.Core" version="3.5.21022.801" exclude="Build,Analyzers" />
+        <dependency id="System.Data.SQLite" version="1.0.117" exclude="Build,Analyzers" />
+        <dependency id="System.Data.SQLite.Linq" version="1.0.117" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime" version="4.3.1" exclude="Build,Analyzers" />
+        <dependency id="linq2db" version="4.4.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\bin\Debug\net6.0\gestor.runtimeconfig.json" target="lib\net6.0\gestor.runtimeconfig.json" />
+    <file src="C:\Users\luiskevin.escudero\Desktop\gestorInventario\gestor\gestor\bin\Debug\net6.0\gestor.dll" target="lib\net6.0\gestor.dll" />
+  </files>
+</package>

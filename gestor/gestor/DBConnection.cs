@@ -1,12 +1,228 @@
 ﻿using gestor.Models;
-using System.Data.SQLite;
-using LinqToDB;
+using System.Linq;
+using SQLite;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace gestor
 {
     public class DBConnection
     {
-        public SQLiteConnection CreateConnection()
+        private string dbName = "database.db";
+
+        public void CreateTable()
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                conn.CreateTable<Item>();
+            }
+        }
+
+        public void DropTable()
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                conn.DropTable<Item>();
+            }
+        }
+        
+        public bool Insert(Item item)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                conn.Insert(item);
+
+                long rowid = conn.ExecuteScalar<long>("SELECT last_insert_rowid()");
+                if (rowid > 0)
+                {
+                    //Console.WriteLine("Record inserted successfully with rowid {0}.", rowid);
+                    return true;
+                }
+                else
+                {
+                    //Console.WriteLine("Error inserting record.");
+                    return false;
+                }
+            }
+        }
+        
+        public Item Read(int id)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                return conn.Table<Item>().Where(x => x.Id == id).FirstOrDefault();
+            }
+        }
+
+        public Item ReadByName(string name)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                return conn.Table<Item>().Where(x => x.Name == name).FirstOrDefault();
+            }
+        }
+
+        public List<Item> ReadAll()
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                return conn.Table<Item>().ToList();
+            }
+        }
+
+        public bool Update(Item item)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                string columns = "";
+
+                if (item.Name != string.Empty)
+                {
+                    columns += "Name = '" + item.Name + "', ";
+                }
+                if (item.Description != string.Empty)
+                {
+                    columns += "Description = '" + item.Description + "', ";
+                }
+                if (item.Category != string.Empty)
+                {
+                    columns += "Category = '" + item.Category + "', ";
+                }
+                if (item.Brand != string.Empty)
+                {
+                    columns += "Brand = '" + item.Brand + "', ";
+                }
+                if (item.Model != string.Empty)
+                {
+                    columns += "Model = '" + item.Model + "', ";
+                }
+                if (item.SerialNumber != string.Empty)
+                {
+                    columns += "SerialNumber = '" + item.SerialNumber + "', ";
+                }
+                if (item.Location != string.Empty)
+                {
+                    columns += "Location = '" + item.Location + "', ";
+                }
+                if (item.Status != string.Empty)
+                {
+                    columns += "Status = '" + item.Status + "', ";
+                }
+                if (item.Notes != string.Empty)
+                {
+                    columns += "Notes = '" + item.Notes + "', ";
+                }
+                if (item.AddDate != string.Empty)
+                {
+                    columns += "AddDate = '" + item.AddDate + "', ";
+                }
+                if (item.Stock != null)
+                {
+                    columns += "Stock = '" + item.Stock + "', ";
+                }
+                if (item.Price != null)
+                {
+                    columns += "Price = '" + item.Price + "', ";
+                }
+                columns = columns.Remove(columns.Length - 2);
+
+
+                string query = "UPDATE Item SET " + columns + " WHERE Id = " + item.Id + ";";
+                Console.WriteLine(query);
+                conn.Query<Item>(query);
+                return true;
+                /*int recordsBefore = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = " + item.Id);
+                conn.Update(item);
+                int recordsAfter = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = " + item.Id);
+                if (recordsBefore < recordsAfter)
+                {
+                    Console.WriteLine("Record updated successfully.");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Error updating record.");
+                    return false;
+                }*/
+            }
+        }
+
+        public void ShowItem(Item i)
+        {
+                Console.WriteLine("Id: " + i.Id);
+                Console.WriteLine("Name: " + i.Name);
+                Console.WriteLine("Description: " + i.Description);
+                Console.WriteLine("Category: " + i.Category);
+                Console.WriteLine("Brand: " + i.Brand);
+                Console.WriteLine("Model: " + i.Model);
+                Console.WriteLine("Serial Number: " + i.SerialNumber);
+                Console.WriteLine("Location: " + i.Location);
+                Console.WriteLine("Status: " + i.Status);
+                Console.WriteLine("Notes: " + i.Notes);
+                Console.WriteLine("Add Date: " + i.AddDate);
+                Console.WriteLine("Stock: " + i.Stock);
+                Console.WriteLine("Price: " + i.Price);
+        }
+
+        public void ShowItems(List<Item> itemList)
+        {
+            foreach (Item i in itemList)
+            {
+                ShowItem(i);
+                Console.WriteLine("--------------------------------------------------");
+            }
+        }
+
+        public bool Delete(int id)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                int recordsBefore = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = ?", id);
+                conn.Delete<Item>(id);
+                int recordsAfter = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = ?", id);
+                if (recordsBefore > recordsAfter)
+                {
+                    //Console.WriteLine("Record deleted successfully.");
+                    return true;
+                }
+                else
+                {
+                    //Console.WriteLine("Error deleting record.");
+                    return false;
+                }
+
+            }
+        }
+
+        public void DeleteAll()
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                conn.DeleteAll<Item>();
+            }
+        }
+
+        public void DeleteByName(string name)
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                string query = "DELETE from Item WHERE Name = '" + name + "';";
+                conn.Query<Item>(query);
+            }
+        }
+
+        public int GetMaxId()
+        {
+            using (var conn = new SQLiteConnection(dbName))
+            {
+                return conn.ExecuteScalar<int>("SELECT MAX(Id) FROM Item");
+            }
+        }
+
+
+
+        /*public SQLiteConnection CreateConnection()
         {
             SQLiteConnection sqlite_conn;
             // Create a new database connection:
@@ -14,22 +230,16 @@ namespace gestor
             // Open the connection:
             try
             {
-                sqlite_conn.Open();
+                sqlite_conn.
             }
             catch (Exception ex)
             {
             }
             return sqlite_conn;
-        }
+        }*/
 
-        public void crearTabla(SQLiteConnection conn)
-        {
-            Console.WriteLine(conn.ConnectionString);
-            DataContext context = new DataContext(conn.ConnectionString);
-            context.CreateTable<Item>();
-        }
 
-        public void CreateTable(SQLiteConnection conn, string tableName, List<ItemNames> itemNames)
+        /*public void CreateTable(SQLiteConnection conn, string tableName, List<ItemNames> itemNames)
         {
             SQLiteCommand sqlite_cmd;
             string columns = "";
@@ -50,9 +260,11 @@ namespace gestor
             sqlite_cmd = conn.CreateCommand();
             sqlite_cmd.CommandText = Createsql;
             sqlite_cmd.ExecuteNonQuery();
-        }
+        }*/
 
-        public void InsertData(SQLiteConnection conn, string tableName, List<Item> items, List<ItemNames> itemNames)
+
+
+        /*public void InsertData(SQLiteConnection conn, string tableName, List<Item> items, List<ItemNames> itemNames)
         {
             SQLiteCommand sqlite_cmd;
             string columns = "";
@@ -96,6 +308,7 @@ namespace gestor
                 Console.WriteLine("\n--------------------");
             }
         }
+
 
         public void ReadById(SQLiteConnection conn, string tableName, List<ItemNames> itemNames, int id)
         {
@@ -300,6 +513,6 @@ namespace gestor
                 maxId = Convert.ToInt32(sqlite_datareader.GetValue(0));
             }
             return maxId;
-        }
+        }*/
     }
 }

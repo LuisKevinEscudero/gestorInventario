@@ -1,6 +1,6 @@
 ﻿using gestor;
 using gestor.Models;
-using System.Data.SQLite;
+
 using System.Globalization;
 
 namespace Gestor
@@ -10,31 +10,36 @@ namespace Gestor
 		static void Main(string[] args)
 		{
 			var menu = new Menu();
-			
 
-			SQLiteConnection sqlite_conn;
-			var db = new DBConnection();
-			sqlite_conn = db.CreateConnection();
+			DBConnection db = new DBConnection();
+			db.DropTable();
+			db.CreateTable();
 
-			List<ItemNames> itemNames = generateItemNames();
-			List<Item> items = generateItems();
-			Console.WriteLine(sqlite_conn.ConnectionString);
-			db.crearTabla(sqlite_conn);
+			var itemList = generateItems();
+			foreach (var item in itemList)
+			{
+				db.Insert(item);
+			}
 
-			/*db.DropTable(sqlite_conn, "Items");
-			db.CreateTable(sqlite_conn, "Items", itemNames);
-			db.InsertData(sqlite_conn, "Items", items, itemNames);
-			db.ReadData(sqlite_conn, "Items", itemNames);
-			Console.WriteLine("*****************************************");
-			List<Item> updateItems = new List<Item>();
-			updateItems.Add(new Item { Id = 8, Name = "Updateeee", Price = 1.1, Brand="a20lpt" });
-			db.UpdateData(sqlite_conn, "Items", itemNames, updateItems, 8);
-			db.ReadData(sqlite_conn, "Items", itemNames);*/
+			/*var x = db.ReadAll();
+			db.ShowItems(x);
+			Console.WriteLine("****************************");
+			//create item to update
+			var itemToUpdate = new Item(1, "update", "hola", "", "", "", "", "location1", "status1", "notes1", "addDate1", 1, 1.1);
+			//var itemToUpdate = new Item(1, "update", "hola", "category1", "brand1", "model1", "serialNumber1", "location1", "status1", "notes1", "addDate1", 1, 1.1);
 
-			db.TerminateConnection(sqlite_conn);
-			
-			
-			//menu.Start();
+			db.Update(itemToUpdate);
+			db.DeleteByName("update");
+			var y= db.ReadAll();
+			db.ShowItems(y);*/
+			//Item x = db.ReadByName("Item 4");
+			//Item y = db.Read(4);
+			//db.ShowItem(x);
+
+
+
+
+			menu.Start();
 
 		}	
 		
@@ -58,7 +63,7 @@ namespace Gestor
 			return items;
 		}
 		
-		public static List<ItemNames> generateItemNames()
+		/*public static List<ItemNames> generateItemNames()
 		{
 			List<ItemNames> itemNames = new List<ItemNames>()
 			{
@@ -78,7 +83,7 @@ namespace Gestor
 			};
 
 			return itemNames;
-		}
+		}*/
 		
 	} 
 }

@@ -40,25 +40,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "System.Core": {
+            "sqlite-net-pcl": {
               "target": "Package",
-              "version": "[3.5.21022.801, )"
-            },
-            "System.Data.SQLite": {
-              "target": "Package",
-              "version": "[1.0.117, )"
-            },
-            "System.Data.SQLite.Linq": {
-              "target": "Package",
-              "version": "[1.0.117, )"
-            },
-            "System.Runtime": {
-              "target": "Package",
-              "version": "[4.3.1, )"
-            },
-            "linq2db": {
-              "target": "Package",
-              "version": "[4.4.0, )"
+              "version": "[1.8.116, )"
             }
           },
           "imports": [
