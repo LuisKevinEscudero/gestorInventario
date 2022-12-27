@@ -464,7 +464,6 @@ namespace gestor
             Console.WriteLine("Press R to return to the menu");
             optionReturn = Console.ReadLine();
             selectionMenu(optionReturn);
-
         }
     }
 }
