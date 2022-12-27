@@ -9,11 +9,16 @@ using System.Text;
 using System.Threading.Tasks;
 using static SQLite.TableMapping;
 
+//define a constant 
+
+
 namespace gestor
 {
     public class Menu
     {
         string optionMenu = "";
+        public const bool VACIO = false;
+        public const bool NO_VACIO = true;
 
         public void Start()
         {
@@ -34,6 +39,7 @@ namespace gestor
             Console.WriteLine("#### 4. Show Products ###########");
             Console.WriteLine("#### 5. Show Product by ID ######");
             Console.WriteLine("#### 6. Show Product by Name ####");
+            Console.WriteLine("#### 7. Delete Product by Name ##");
             Console.WriteLine("#### r. Reestart the menu #######");
             Console.WriteLine("#### 0. Exit ####################");
             Console.WriteLine("#################################");
@@ -72,22 +78,17 @@ namespace gestor
                 case "5":
                     Console.Clear();
                     Console.WriteLine("Show Product by ID");
-                    //ShowProductById();
+                    ShowProductById();
                     break;
                 case "6":
                     Console.Clear();
                     Console.WriteLine("Show Product by Name");
-                    //ShowProductByName();
+                    ShowProductByName();
                     break;
                 case "7":
                     Console.Clear();
-                    Console.WriteLine("Add Table");
-                    //AddTable();
-                    break;
-                case "8":
-                    Console.Clear();
-                    Console.WriteLine("Show Tables");
-                    //ShowTables();
+                    Console.WriteLine("Delete Product by Name");
+                    DeleteProductByName();
                     break;
                 case "0":
                     Console.Clear();
@@ -319,7 +320,11 @@ namespace gestor
                 throw new IdNotFoundException("The ID entered is not valid: " + input);
             }
 
-            if (!CheckItem(item))
+            if (CheckItem(item) == VACIO)
+            {
+                Console.WriteLine("You need to enter at least one field to update");
+            }
+            else
             {
                 Console.WriteLine("hola");
                 if (db.Update(item))
@@ -330,10 +335,6 @@ namespace gestor
                 {
                     throw new UpdateException("Error updating the product");
                 }
-            }
-            else
-            {
-                Console.WriteLine("You need to enter at least one field to update");
             }
         }
         
@@ -351,67 +352,14 @@ namespace gestor
 
         private bool CheckItem(Item item)
         {
-            bool empty = false;
-
-            if (item.Name == string.Empty)
+            bool empty = NO_VACIO;
+            
+            if (item.Name == string.Empty && item.Description == string.Empty && item.Category == string.Empty &&
+                item.Brand == string.Empty && item.Model == string.Empty && item.SerialNumber == string.Empty &&
+                item.Location == string.Empty && item.Status == string.Empty && item.Notes == string.Empty &&
+                item.AddDate == string.Empty && item.Stock == null && item.Price == null)
             {
-                Console.WriteLine("name: "+item.Name);
-                empty= true;
-            }
-            if (item.Description == string.Empty)
-            {
-                Console.WriteLine("descripcion: "+item.Description);
-                empty = true;
-            }
-            if (item.Category == string.Empty)
-            {
-                Console.WriteLine("category: "+item.Category);
-                empty = true;
-            }
-            if (item.Brand == string.Empty)
-            {
-                Console.WriteLine("brand: "+item.Brand);
-                empty = true;
-            }
-            if (item.Model == string.Empty)
-            {
-                Console.WriteLine("model: "+item.Model);
-                empty = true;
-            }
-            if (item.SerialNumber == string.Empty)
-            {
-                Console.WriteLine("serial number: "+item.SerialNumber);
-                empty = true;
-            }
-            if (item.Location == string.Empty)
-            {
-                Console.WriteLine("location: "+item.Location);
-                empty = true;
-            }
-            if (item.Status == string.Empty)
-            {
-                Console.WriteLine("status: "+item.Status);
-                empty = true;
-            }
-            if (item.Notes == string.Empty)
-            {
-                Console.WriteLine("notes: "+item.Notes);
-                empty = true;
-            }
-            if (item.AddDate == string.Empty)
-            {
-                Console.WriteLine("addDate: "+item.AddDate);
-                empty = true;
-            }
-            if (item.Stock == null)
-            {
-                Console.WriteLine("stock: "+item.Stock);
-                empty = true;
-            }
-            if (item.Price == null)
-            {
-                Console.WriteLine("price: "+item.Price);
-                empty = true;
+                empty = VACIO;
             }
             return empty;
         }
@@ -423,127 +371,70 @@ namespace gestor
             db.ShowItems(listItems);
         }
 
-        /*private void ShowProductById()
+        private void ShowProductById()
         {
-
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
-
-            //string tableName = tableSelector(tableNames);
-
-            string tableName = "Items";
-
+            
             Console.WriteLine("Enter the ID of the product: ");
             string input = Console.ReadLine();
             int id;
-            var maxID = db.GetMaxId(conn, tableName);
+            var maxID = db.GetMaxId();
             if (Int32.TryParse(input, out id) && Convert.ToInt32(input) <= maxID && Convert.ToInt32(input) >=0)
             {
                 id = Convert.ToInt32(input);
-                var columns = db.GetColumnsName(conn, tableName);
-                db.ReadById(conn, tableName, columns, id);
+                var item = db.Read(id);
+                db.ShowItem(item);
             }
             else
             {
                 throw new IdNotFoundException("The ID entered is not valid: " + input);
             }
-
-            
-            db.TerminateConnection(conn);
         }
 
 
         private void ShowProductByName()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            //var tableNames = db.GetTableNames(conn);
-
-            //string tableName = tableSelector(tableNames);
-
-            string tableName = "Items";
 
             Console.WriteLine("Enter the name of the product: ");
             var name = Console.ReadLine();
 
-            var columns = db.GetColumnsName(conn, tableName);
-            db.ReadByName(conn, tableName, columns, name);
-            db.TerminateConnection(conn);
+            var item = db.ReadByName(name);
+            if (item != null)
+            {
+                db.ShowItem(item);
+            }
+            else
+            {
+                throw new NameNotFoundException("The name entered is not valid: " + name);
+            }
+
         }
 
-        private void AddTable()
+        private void DeleteProductByName()
         {
             var db = new DBConnection();
-            var conn = db.CreateConnection();
-            var tableNames = db.GetTableNames(conn);
 
-            Console.WriteLine("Enter the name of the table: ");
-            var tableName = Console.ReadLine();
+            Console.WriteLine("Enter the name of the product: ");
+            var name = Console.ReadLine();
 
-            List<ItemNames> itemNames = new List<ItemNames>();
-            ItemNames itemName = new ItemNames();
-            
-            itemName.Name = "Id";
-            itemName.Type = "int";
-            itemNames.Add(itemName);
-            
-
-            Console.WriteLine("Enter the number of columns: ");
-            var columnsNumber = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("The first column is always Id(int) and is not necessary to enter it");
-
-            for (int i = 0; i < columnsNumber; i++)
+            var item = db.ReadByName(name);
+            if (item != null)
             {
-                itemName = new ItemNames();
-                Console.WriteLine("Enter the name of the column: ");
-                itemName.Name = Console.ReadLine();
-                Console.WriteLine("Enter the type of the column: ");
-                itemName.Type = Console.ReadLine();
-                itemNames.Add(itemName);
-            }
-
-            db.CreateTable(conn, tableName, itemNames);
-            db.TerminateConnection(conn);
-        }
-
-        private string tableSelector(List<string> tableNames)
-        {
-            var tableName = "";
-            Console.WriteLine("This is the list of tables in the database: ");
-            foreach (var i in tableNames)
-            {
-                Console.WriteLine("- " + i);
-            }
-
-            Console.WriteLine("Enter the name of the table: ");
-            var tableNameInput = Console.ReadLine();
-
-            foreach (var i in tableNames)
-            {
-                if (i == tableNameInput)
+                if (db.Delete(item.Id))
                 {
-                    tableName = i;
+                    Console.WriteLine("The product was deleted successfully");
+                }
+                else
+                {
+                    throw new DeleteException("Error deleting the product");
                 }
             }
-
-            return tableName;
-        }
-        
-        private void ShowTables()
-        {
-            var db = new DBConnection();
-            var conn = db.CreateConnection();
-            var tableNames = db.GetTableNames(conn);
-
-            Console.WriteLine("This is the list of tables in the database: ");
-            foreach (var i in tableNames)
+            else
             {
-                Console.WriteLine("- " + i);
+                throw new NameNotFoundException("The name entered is not valid: " + name);
             }
-        }*/
-
+        }
 
         private void returMenu()
         {

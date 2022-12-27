@@ -36,12 +36,10 @@ namespace gestor
                 long rowid = conn.ExecuteScalar<long>("SELECT last_insert_rowid()");
                 if (rowid > 0)
                 {
-                    //Console.WriteLine("Record inserted successfully with rowid {0}.", rowid);
                     return true;
                 }
                 else
                 {
-                    //Console.WriteLine("Error inserting record.");
                     return false;
                 }
             }
@@ -132,19 +130,6 @@ namespace gestor
                 Console.WriteLine(query);
                 conn.Query<Item>(query);
                 return true;
-                /*int recordsBefore = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = " + item.Id);
-                conn.Update(item);
-                int recordsAfter = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = " + item.Id);
-                if (recordsBefore < recordsAfter)
-                {
-                    Console.WriteLine("Record updated successfully.");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("Error updating record.");
-                    return false;
-                }*/
             }
         }
 
@@ -183,18 +168,16 @@ namespace gestor
                 int recordsAfter = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Item WHERE Id = ?", id);
                 if (recordsBefore > recordsAfter)
                 {
-                    //Console.WriteLine("Record deleted successfully.");
                     return true;
                 }
                 else
                 {
-                    //Console.WriteLine("Error deleting record.");
                     return false;
                 }
 
             }
         }
-
+        
         public void DeleteAll()
         {
             using (var conn = new SQLiteConnection(dbName))
@@ -203,14 +186,6 @@ namespace gestor
             }
         }
 
-        public void DeleteByName(string name)
-        {
-            using (var conn = new SQLiteConnection(dbName))
-            {
-                string query = "DELETE from Item WHERE Name = '" + name + "';";
-                conn.Query<Item>(query);
-            }
-        }
 
         public int GetMaxId()
         {
