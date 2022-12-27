@@ -40,6 +40,8 @@ namespace gestor
             Console.WriteLine("#### 5. Show Product by ID ######");
             Console.WriteLine("#### 6. Show Product by Name ####");
             Console.WriteLine("#### 7. Delete Product by Name ##");
+            Console.WriteLine("#### 8. Create DataBase #########");
+            Console.WriteLine("#### 9. Create Example Data #####");
             Console.WriteLine("#### r. Reestart the menu #######");
             Console.WriteLine("#### 0. Exit ####################");
             Console.WriteLine("#################################");
@@ -89,6 +91,16 @@ namespace gestor
                     Console.Clear();
                     Console.WriteLine("Delete Product by Name");
                     DeleteProductByName();
+                    break;
+                case "8":
+                    Console.Clear();
+                    Console.WriteLine("Create DataBase");
+                    db.CreateTable();
+                    break;
+                case "9":
+                    Console.Clear();
+                    Console.WriteLine("Insert Example Data");
+                    InsertExampleData();
                     break;
                 case "0":
                     Console.Clear();
@@ -433,6 +445,16 @@ namespace gestor
             else
             {
                 throw new NameNotFoundException("The name entered is not valid: " + name);
+            }
+        }
+
+        private void InsertExampleData()
+        {
+            var db = new DBConnection();
+            var itemList = db.generateItems();
+            foreach (var item in itemList)
+            {
+                db.Insert(item);
             }
         }
 
